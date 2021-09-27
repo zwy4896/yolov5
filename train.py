@@ -364,8 +364,7 @@ def train(hyp,  # path/to/hyp.yaml or hyp dictionary
             fi = fitness(np.array(results).reshape(1, -1))  # weighted combination of [P, R, mAP@.5, mAP@.5-.95]
             if fi > best_fitness:
                 best_fitness = fi
-            log_vals = list(mloss) + list(results) + lr
-            callbacks.run('on_fit_epoch_end', log_vals, epoch, best_fitness, fi)
+            callbacks.run('on_fit_epoch_end', list(mloss) + list(results) + lr, epoch, best_fitness, fi)
 
             # Save model
             if (not nosave) or (final_epoch and not evolve):  # if save
@@ -419,6 +418,7 @@ def train(hyp,  # path/to/hyp.yaml or hyp dictionary
                                             verbose=True,
                                             plots=True,
                                             callbacks=callbacks)  # val best model with plots
+                    callbacks.run('on_fit_epoch_end', list(mloss) + list(results) + lr, epoch, best_fitness, fi)
 
         callbacks.run('on_train_end', last, best, plots, epoch)
         LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}")
